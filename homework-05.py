@@ -15,6 +15,35 @@
 Количество четных и нечетных цифр в числе равно: (1, 2)
 """
 
+
+def count_even_odd(number):
+    mod = number % 10
+
+    even = 0
+    odd = 0
+
+    if mod % 2 == 0:
+        even += 1
+    else:
+        odd += 1
+
+    number = int(number // 10)
+
+    if number > 0:
+        result = count_even_odd(number)
+
+        even += result[0]
+        odd += result[1]
+
+    return list([even, odd])
+
+
+
+number = int(input("Введите натуральное число: "))
+
+print(count_even_odd(number))
+
+
 """
 Задание 3. Сформировать из введенного числа
 обратное по порядку входящих в него
@@ -33,6 +62,28 @@
 1230 -> 0321
 """
 
+def reverse_print(number):
+
+    index = len(number) - 1
+
+    if index == -1:
+        return ''
+
+    reversed = number[index]
+
+    index -= 1
+
+    if index >= 0:
+        reversed = reversed + reverse_print(number[:index + 1])
+
+    return reversed
+
+
+number = input("Введите натуральное число: ")
+
+print(reverse_print(number))
+
+
 """
 Задание 4. Найти сумму n элементов следующего ряда чисел:
 1 -0.5 0.25 -0.125 ...
@@ -43,6 +94,27 @@
 Решите через рекурсию. В задании нельзя применять циклы.
 Нужно обойтисть без создания массива!
 """
+
+def count_sum(n):
+    my_sum = 0
+    number = float(input("Введите число: "))
+
+    my_sum += number
+
+    n -= 1
+
+    if n == 0:
+        return my_sum
+    else:
+        prev_result = count_sum(n)
+        my_sum += prev_result
+
+    return my_sum
+
+
+number = int(input("Введите количество элементов: "))
+
+print(count_sum(number))
 
 """
 Задание 5. Вывести на экран коды и символы таблицы ASCII, начиная с символа
@@ -63,6 +135,38 @@
 Допускается исп-е встроенных ф-ций
 """
 
+def prepare_string(start, end):
+
+    string = ''
+    string += f'{start} - {chr(start)}'
+
+    start += 1
+
+    if start == end:
+        return string
+    else:
+        string += ' ' + prepare_string(start, end)
+
+    return string
+
+def print_ascii(start = 32, end = 128):
+
+    if end - start >= 10:
+        step = 10
+    else:
+        step = end - start
+
+    print(prepare_string(start, start + step))
+
+    start += step
+
+    if start < end:
+        print_ascii(start, end)
+
+    return
+
+print_ascii()
+
 """
 Задание 6. В программе генерируется случайное целое число от 0 до 100.
 Пользователь должен его отгадать не более чем за 10 попыток. После каждой
@@ -71,3 +175,28 @@
 то вывести загаданное число.
 Решите через рекурсию. В задании нельзя применять циклы.
 """
+
+from random import randint
+
+
+def guess(number, n = 10):
+
+    attempt = int(input("Попробуйте угадать целое число от 0 до 100: "))
+
+    if attempt == number:
+        print("Вы угадали!")
+
+    else:
+        n -= 1
+
+        if n == 0:
+            print("Вы исчерпали 10 попыток и проиграли!")
+            return
+        else:
+            guess(number, n)
+
+    return
+
+
+number = randint(0, 100)
+guess(number)
