@@ -15,24 +15,63 @@
 
 Проверить работу примера, создав экземпляр и вызвав описанный метод.
 """
+from time import sleep
+from datetime import datetime as dt
+
+
+class TrafficLight:
+    _status = {'красный': 7, 'желтый': 2, 'зеленый': 14}
+    _color = ''
+
+    def running(self):
+        for color, sw_time in self._status.items():
+            self._color = color
+            start_new_status = dt.now()
+
+            print(f"Светофор сменил сигнал на '{self._color}' "
+                  f"на {sw_time} секунд")
+
+            sleep(sw_time)
+
+            print(f"Мигающий сигнал '{self._color}' после "
+                  f"{(dt.now() - start_new_status).seconds} секунд")
+
+
+if __name__ == '__main__':
+    tl = TrafficLight()
+    tl.running()
+
 """
 Задание 2.
 
-Реализовать класс Road (дорога), в котором определить защищенные атрибуты:
-length (длина в метрах), width (ширина в метрах).
-
-Значения данных атрибутов должны передаваться при создании экземпляра класса.
-
-Реализовать публичный метод расчета массы асфальта, необходимого для покрытия
-всего дорожного полотна.
-
-Использовать формулу: длина * ширина * масса асфальта для покрытия одного кв
-метра дороги асфальтом, толщиной в 1 см * число м толщины полотна.
-Массу и толщину сделать публичными атрибутами.
-Проверить работу метода.
-
+ 
 Например: 20м*5000м*25кг*0.05м = 125000 кг = 125 т
 """
+
+
+class Road:
+    _surface_spec_gravity = 0.01
+
+    def __init__(self, length, width):
+        self._length = float(length)
+        self._width = float(width)
+
+    def asphalt_mass_calculation(self, thickness):
+        try:
+            return (self._length * self._width
+                    * thickness * self._surface_spec_gravity)
+        except TypeError:
+            return None
+
+
+if __name__ == '__main__':
+    road = Road(1000, 2)
+    print(
+        'Масса асфальта равна:',
+        road.asphalt_mass_calculation(20),
+        'тонн'
+    )
+
 """
 Задание 3.
 
@@ -50,6 +89,46 @@ length (длина в метрах), width (ширина в метрах).
 П.С. попытайтесь добить вывода информации о сотруднике также через перегрузку str
 str(self) - вызывается функциями str, print и format. Возвращает строковое представление объекта.
 """
+
+
+class Worker:
+
+    def __init__(self, name, surname, position, wage, bonus):
+        self.name = name
+        self.surname = surname
+        self.position = position
+        self._income = {"wage": wage, "bonus": bonus}
+
+class Position(Worker):
+    def get_full_name(self):
+        return ' '.join([self.name, self.surname])
+
+    def get_total_income(self):
+        return sum(self._income.values())
+
+
+if __name__ == '__main__':
+    position_data = [
+        {
+            'name': 'Иван',
+            'surname': 'Петров',
+            'position': 'Менеджер',
+            'wage': 50000,
+            'bonus': 10000
+        }
+
+    ]
+
+    for item in position_data:
+        position = Position(item)
+
+        print('From data: ', item)
+        print('Position name: ', position.name)
+        print('Position surname: ', position.surname)
+        print('Position full name: ', position.get_full_name())
+        print('Position position: ', position.position)
+        print('Position total income: ', position.get_total_income())
+
 """
 Задание 4.
 Реализовать класс Matrix (матрица). Обеспечить перегрузку конструктора класса (метод init()), 
@@ -74,3 +153,45 @@ str(self) - вызывается функциями str, print и format. Воз
 Подсказка: сложение элементов матриц выполнять поэлементно — первый элемент первой строки первой матрицы складываем с
  первым элементом первой строки второй матрицы и т.д.
 """
+
+
+class Matrix:
+    def __init__(self, data):
+        self.data = data
+
+    def __str__(self):
+        return '\n'.join(['\t'.join([str(cell) for cell in row]) for row in self.data])
+
+    def __add__(self, other):
+        if len(self.data) != len(other.data) or len(self.data[0]) != len(other.data[0]):
+            raise ValueError('Матрицы должны быть одинакового размера')
+
+        result = []
+        for i in range(len(self.data)):
+            row = []
+            for j in range(len(self.data[0])):
+                row.append(self.data[i][j] + other.data[i][j])
+            result.append(row)
+
+        return Matrix(result)
+
+
+# Пример использования класса
+matrix1 = Matrix([[31, 22], [37, 43], [51, 86]])
+matrix2 = Matrix([[3, 5, 32], [2, 4, 6], [-1, 64, -8]])
+
+print(matrix1)
+# 31 22
+# 37 43
+# 51 86
+
+print(matrix2)
+# 3 5 32
+# 2 4 6
+# -1 64 -8
+
+matrix3 = matrix1 + matrix2
+print(matrix3)
+# 34 27 32
+# 39 47 12
+# 50 150 -8
