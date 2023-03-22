@@ -16,6 +16,18 @@
 --- используйте списки и циклы, не дублируйте функции
 """
 
+words = ['разработка', 'сокет', 'декоратор']
+
+unicode_words = []
+
+for word in words:
+    unicode_word = ''
+    for letter in word:
+        unicode_word += f'\\u{ord(letter):04x}'
+    unicode_words.append(unicode_word)
+
+for i, unicode_word in enumerate(unicode_words):
+    print(f'{i+1}. {type(unicode_word)} {unicode_word}')
 
 """
 Задание 2.
@@ -30,7 +42,10 @@
 --- используйте списки и циклы, не дублируйте функции
 """
 
+words = [b'class', b'function', b'method']
 
+for word in words:
+    print(type(word), word, len(word))
 
 
 """
@@ -45,12 +60,14 @@
 придумайте как это сделать
 """
 
+words = ['attribute', 'класс', 'функция', 'type']
 
-
-
-
-
-
+for word in words:
+    try:
+        b_word = bytes(word, 'utf-8')
+        print(f'{word} можно записать в байтовом типе: {b_word}')
+    except:
+        print(f'{word} нельзя записать в байтовом типе')
 
 
 """
@@ -65,11 +82,13 @@
 """
 
 
+words = ['разработка', 'администрирование', 'protocol', 'standard']
 
-
-
-
-
+for word in words:
+    b_word = word.encode('utf-8')
+    print(f'{word} в байтовом представлении: {b_word}')
+    decoded_word = b_word.decode('utf-8')
+    print(f'{b_word} в строковом представлении: {decoded_word}')
 
 
 
@@ -82,3 +101,23 @@
 Подсказки:
 --- используйте модуль chardet, иначе задание не засчитается!!!
 """
+import subprocess
+import chardet
+
+class Ping:
+    def __init__(self, urls):
+        self.urls = urls
+
+    def run_ping(self):
+        for url in self.urls:
+            process = subprocess.Popen(['ping', '-c', '4', url],stdout=subprocess.PIPE)
+            output, error = process.communicate()
+            encoding = chardet.detect(output)['encoding']
+            decoded_output = output.decode(encoding)
+            print(f'Ping для {url}:')
+            print(decoded_output)
+
+
+urls = ['yandex.ru', 'youtube.com']
+ping = Ping(urls)
+ping.run_ping()
